@@ -3,6 +3,19 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+// For constructing gitSha only
+def getGitSha = {
+    try {
+        providers.exec {
+            commandLine 'gggiiittt', 'rev-parse', 'HEAD'
+        }.standardOutput.asText.get().trim()
+    } catch (Throwable e) {
+        "caught" // This case should be reached in all situations
+    }
+}
+
+final def gitSha = getGitSha()
+
 android {
     namespace 'com.example.gradlebugtest'
     compileSdk 33
@@ -13,6 +26,17 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+
+        // Added for test
+        flavorDimensions += "color"
+        productFlavors {
+            blue {}
+            green {
+                resValue "string", "app_name", "GradleBugTest"
+                applicationIdSuffix ".test"
+                versionNameSuffix "-" + gitSha
+            }
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,6 +56,12 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
+            outputFileName = "GradleBugTest_${variant.versionName}_${variant.versionCode}_${gitSha}_" +
+                    "${variant.flavorName}_${buildType.name}.apk"
+        }
     }
 }
 
