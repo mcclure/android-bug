@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import com.example.gradlebugtest.databinding.ActivityMainBinding
+import androidx.media3.exoplayer.ExoPlayer
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +33,12 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+
+        ExoPlayer.Builder(this)
+            .build()
+            .also { exoPlayer ->
+                //binding.videoView.player = exoPlayer
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
